@@ -5,7 +5,7 @@ Kindle 4 + KUAL 上的一键微信读书入口：**Kindle 桌面 → KUAL → K4
 - 设备：Kindle 4（`0E`/Tequila）与黑色 Kindle 5th Gen / K4B（`23`/Sauza）——同为 FW 4.1.4 / KDK-1.0 / Yoshi，用同一份扩展。
 - 组成：
   - **本仓库**：KUAL 扩展（`kual/`，config.xml + menu.json + bin/k4weread.sh）——写模式标记 → 启动 KOReader；
-  - **[weread_K4.koplugin](https://github.com/dororo42/weread_K4.koplugin) v9.5+**：微信读书插件的 weread-only 模式——消费标记、**默认重开上一本微信书**（无记录/未登录回退：未登录显式弹二维码登录，已登录进书架）、阅读中 Home 键回书架、关书自动回书架、Menu=微信读书菜单（含 Exit KOReader）。
+  - **[weread_K4.koplugin](https://github.com/dororo42/weread_K4.koplugin) v9.7+**：微信读书插件的 weread-only 模式——消费标记、**默认重开上一本微信书**（无记录/未登录回退：未登录显式弹二维码登录，已登录进书架）、阅读中 Home 键回书架、关书自动回书架、Menu=微信读书菜单（含 Reading style 样式直达与 Exit KOReader）。
 - 上游文档：[K4weread 可行性评估报告（2026-11-08）](docs/DESIGN.md)记录了路线选型与全部证据。
 
 ## 工作原理（weread-only 握手）
@@ -35,14 +35,14 @@ USB 拷贝或 scp 到 `/mnt/us/extensions/k4weread/`：
 
 安全弹出 USB → 重启（KUAL 只在启动时扫描 `extensions/`）→ KUAL 里出现 **K4weread** 菜单。详见 [docs/INSTALL.md](docs/INSTALL.md)。
 
-## K4weread 会话中的按键（v0.1.0 / 插件 v9.5）
+## K4weread 会话中的按键（v0.1.0 / 插件 v9.7）
 
 保留 weread_K4.koplugin 现有 15 条快捷键（见[插件 README 的按键速查表](https://github.com/dororo42/weread_K4.koplugin#K4-阅读时按键速查koreader--hotkeyskoplugin--本分支改动)），其中 2 条在 weread-only 模式下重定义：
 
 | 键 | weread-only 模式下的功能 |
 |----|------|
 | Home | **书架**（原：文件管理器） |
-| Menu | **微信读书菜单**（书架/搜索/上报/统计/设置；原：KOReader 全量菜单） |
+| Menu | **微信读书菜单**（书架/样式/搜索/上报/统计/设置/Exit；原：KOReader 全量菜单） |
 | Back（关书后） | **书架**（原：文件管理器；0.2s 内接管） |
 | ScreenKB + Down | 微信读书快捷菜单（保留） |
 | 其余 12 条（翻页/章节/目录/书签/Wi-Fi/切书…） | 原样保留 |
