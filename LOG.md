@@ -46,3 +46,10 @@
 - **改了什么（设备侧，仅新增）**：按本仓 kual/ 原样部署 `/mnt/us/extensions/k4weread/{config.xml,menu.json,bin/k4weread.sh}`（755），未改任何现有扩展与插件文件；`sh -n` 与 usage 探针（`k4weread.sh` 无参 → usage，rc=2）通过。删除该目录即完全回退。
 - **已知差异**：K5 插件为 v8.4，尚无 v9.0+ 的 only-mode launch.flag 握手——"Start WeRead only" 在 K5 上会等价于普通启动（touch 的 flag 无人消费，无害），待插件升级后自动生效。
 - **未做**：未在 K5 真机点按验证菜单渲染与启动（等用户操作）；未升插件版本；未 commit 本记录。
+
+## 2026-11-08 · 二维码登录退出机制（用户真机 BUG）
+
+- **为什么**：用户反馈「Cookie 续期重新扫二维码时不扫无法退出，首次登录不扫也要能退出」。核实真机 KOReader `qrmessage.lua`：`QRMessage` 是 modal `InputContainer`，`init()` 注册 `AnyKeyPressed`（任意键仅关窗、吞掉 Menu）；项目侧 `_show_qr` 未绑定任何退出动作，且首次登录在无文档 FM 上下文，weread-only 收敛菜单与 `Exit KOReader` 均不可达。
+- **改了什么（插件仓）**：`weread/lib/qr_login.lua:_show_qr` 覆盖 `key_events` 为 `Close`（Back → `cancel()` 停轮询）与 `ExitApp`（Menu → 先取消再广播原生 `Exit`），按真机 `readermenu.lua:79` 的两层格式；弹出时 transient 提示两个键；`ui/event` 按需 require 避免影响其它 spec。`spec/qr_login_spec.lua` 扩桩并新增 5 例；README 登录节与变更日志登记；本仓 `docs/REAL_DEVICE_TEST.md` 补 D10 验收项。
+- **如何验证**：TDD 红基线 4 例失败 → 修复后 `qr_login_spec` 11/11、全量 busted **445/0**、`luac -p` 全部 Lua、`luacheck` 0 warnings / 0 errors、module-map 0 孤儿、version-sync 通过。
+- **边界**：未递增版本、未发版、未打 tag；`showBusy` 获取二维码阶段仍不可取消（有 10/20s 超时）；OTP 输入框沿用自带 Cancel；真机 D10（首次登录 + 续期两条路径）待用户按键验收。
