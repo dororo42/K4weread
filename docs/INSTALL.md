@@ -4,7 +4,7 @@
 
 - Kindle 4（`0E`/Tequila）或黑色 Kindle 5th Gen / K4B（`23`/Sauza），FW 4.1.4，已越狱 + MKK + KUAL-KDK-1.0（azw2）。
 - 已部署 KOReader（实机 v2026.07.1 验证）。
-- 已部署 [weread_K4.koplugin](https://github.com/dororo42/weread_K4.koplugin) **v9.0 或更高**（低版本时 K4weread 退化为普通 KOReader 快捷入口，没有 weread-only 模式）。
+- 已部署 [weread_K4.koplugin](https://github.com/dororo42/weread_K4.koplugin) **v9.5 或更高**（低版本时 K4weread 退化为普通 KOReader 快捷入口，没有 weread-only 模式）。
 
 ## 安装（USB 或 scp 二选一）
 

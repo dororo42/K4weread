@@ -5,7 +5,7 @@ Kindle 4 + KUAL 上的一键微信读书入口：**Kindle 桌面 → KUAL → K4
 - 设备：Kindle 4（`0E`/Tequila）与黑色 Kindle 5th Gen / K4B（`23`/Sauza）——同为 FW 4.1.4 / KDK-1.0 / Yoshi，用同一份扩展。
 - 组成：
   - **本仓库**：KUAL 扩展（`kual/`，config.xml + menu.json + bin/k4weread.sh）——写模式标记 → 启动 KOReader；
-  - **[weread_K4.koplugin](https://github.com/dororo42/weread_K4.koplugin) v9.1+**：微信读书插件的 weread-only 模式——消费标记、**默认重开上一本微信书**（v9.0 只进书架；无记录/文件消失时回退书架）、阅读中 Home 键回书架。
+  - **[weread_K4.koplugin](https://github.com/dororo42/weread_K4.koplugin) v9.5+**：微信读书插件的 weread-only 模式——消费标记、**默认重开上一本微信书**（无记录/未登录回退：未登录显式弹二维码登录，已登录进书架）、阅读中 Home 键回书架、关书自动回书架、Menu=微信读书菜单（含 Exit KOReader）。
 - 上游文档：[K4weread 可行性评估报告（2026-11-08）](docs/DESIGN.md)记录了路线选型与全部证据。
 
 ## 工作原理（weread-only 握手）
@@ -35,7 +35,7 @@ USB 拷贝或 scp 到 `/mnt/us/extensions/k4weread/`：
 
 安全弹出 USB → 重启（KUAL 只在启动时扫描 `extensions/`）→ KUAL 里出现 **K4weread** 菜单。详见 [docs/INSTALL.md](docs/INSTALL.md)。
 
-## K4weread 会话中的按键（v0.1.0 / 插件 v9.0）
+## K4weread 会话中的按键（v0.1.0 / 插件 v9.5）
 
 保留 weread_K4.koplugin 现有 15 条快捷键（见[插件 README 的按键速查表](https://github.com/dororo42/weread_K4.koplugin#K4-阅读时按键速查koreader--hotkeyskoplugin--本分支改动)），其中 2 条在 weread-only 模式下重定义：
 
@@ -47,11 +47,13 @@ USB 拷贝或 scp 到 `/mnt/us/extensions/k4weread/`：
 | ScreenKB + Down | 微信读书快捷菜单（保留） |
 | 其余 12 条（翻页/章节/目录/书签/Wi-Fi/切书…） | 原样保留 |
 
-## 已知边界（v0.1.0，诚实登记）
+## 已知边界（诚实登记，随插件版本演进）
 
-- 阅读中按 Back 关书后会落到 KOReader 文件管理器（而非书架）；再按 Home 即回书架。关书直达书架需要跨实例交接，留待后续版本。
-- Menu 仍是 KOReader 全量菜单（微信读书菜单置顶）；"只显示必要设置组"需要菜单收敛机制，留待后续版本。
-- KUAL 菜单标签暂用 ASCII：KDK-1.0 的 Unicode 标签渲染（C-3 字体 run 补丁）尚未真机验证，验证通过后再切中文标签（见 docs/REAL_DEVICE_TEST.md B2）。
+- ~~阅读中按 Back 关书后落文件管理器~~ → **已解决**（插件 v9.3：关书 0.2s 自动回书架；真退出/切书不回弹）。
+- ~~Menu 是 KOReader 全量菜单~~ → **已解决**（插件 v9.3：weread-only 下 Menu=微信读书菜单；v9.5：菜单末尾含 Exit KOReader）。
+- ~~首次未登录无法进入~~ → **已解决**（插件 v9.4：未登录首启显式弹二维码登录）。
+- 书架后台刷新只更新缓存、**不重绘已打开的书架页**（下次打开生效；刻意决策，避免翻页位置跳变）。
+- KUAL 菜单标签维持 ASCII：KDK-1.0 的 Unicode 标签渲染（C-3 字体 run 补丁）未真机验证，且用户已明确暂不做中文化（B2 关闭）。
 
 ## 构建 / 门禁
 
