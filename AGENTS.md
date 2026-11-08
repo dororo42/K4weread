@@ -20,8 +20,8 @@ Kindle 4 + KUAL 的一键微信读书入口（KUAL 扩展 + weread_K4.koplugin w
 
 ## Current Handoff
 
-- Latest: `handoffs/2026-11-08-165419-k4weread-closure/HANDOFF.md`
-- Branch: main @ 4e4125a
+- Latest: `handoffs/2026-11-08-172009-k4weread-v9-7-sync/HANDOFF.md`
+- Branch: main @ 62738f1
 - Status: [TODO: 进行中 / 等待决策 / …]
 
 任何 agent 开始工作前，先读上面的 HANDOFF.md。这份指针由 orbital_handoff 维护，手工交接时请同步更新。
