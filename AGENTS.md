@@ -10,7 +10,7 @@ Kindle 4 + KUAL 的一键微信读书入口（KUAL 扩展 + weread_K4.koplugin w
 ## 项目事实（接手必读）
 
 - 单一版本源：`kual/config.xml` 的 `<version>`；`tools/check_config.py` 与 CI 门禁依赖它。
-- weread-only 握手标记：`/mnt/us/k4weread/launch.flag`（本仓 `kual/bin/k4weread.sh` 写，weread_K4.koplugin `weread/lib/only_mode.lua` 读+删）。改路径必须三处同步（脚本 + 插件仓 + 文档），`tools/check_marker_path.py` 只能守本仓一侧，插件仓一侧靠该仓自己的 spec。
+- weread-only 握手标记：`/mnt/us/k4weread/launch.flag`（本仓 `kual/bin/k4weread.sh` 写，weread_K4.koplugin `weread/lib/only_mode.lua` 读+删）。改路径必须三处同步（脚本 + 插件仓 + 文档）：`tools/check_marker_path.py --peer-repo <插件仓>` 同时钉死写入侧、读取侧与全部文档，CI 克隆插件仓后显式校验；插件仓 `spec/only_mode_spec.lua` 另有生产字面量断言。
 - KUAL 扩展执行模型（真机/反编译双证）：默认 action = KUAL 自杀退出 → onStop 后台拉起 `{ cmd ; } 2>>/var/tmp/KUAL.log &`，MKK su root，cwd=扩展目录；`killKnownOffenders` 只杀 matchbox-keyboard/kterm/skipstone/cr3。
 - menu.json 选项词汇以真机 koreader 扩展为权威（name/priority/action/params/internal，本仓不使用 exitmenu/refresh/if）；`tools/check_menu.py` 锁死词汇集。
 - 菜单标签用 ASCII（KDK-1.0 Unicode 渲染未真机验证，见 docs/REAL_DEVICE_TEST.md B2）。
@@ -21,7 +21,7 @@ Kindle 4 + KUAL 的一键微信读书入口（KUAL 扩展 + weread_K4.koplugin w
 ## Current Handoff
 
 - Latest: `handoffs/2026-11-08-172009-k4weread-v9-7-sync/HANDOFF.md`
-- Branch: main @ 62738f1
-- Status: [TODO: 进行中 / 等待决策 / …]
+- Branch: main @ d4afbf3
+- Status: 审查修复批次（2026-11-08）已完成并提交；weread_K4 的 P1-A 及其修复属未发版工程提交，`v9.7` 仅指已发布 Release，勿据此认定双仓已同步收口。待办：用户明确发版时才递增版本，真机 A–D 清单待设备接入后重跑；详见该 HANDOFF.md 末尾「审查后修复批次」。未递增版本、未重写发布资产。
 
 任何 agent 开始工作前，先读上面的 HANDOFF.md。这份指针由 orbital_handoff 维护，手工交接时请同步更新。

@@ -24,8 +24,10 @@ KOREADER=/mnt/us/koreader/koreader.sh
 
 case "$1" in
     start)
-        mkdir -p "$MARKER_DIR" 2>/dev/null
-        touch "$MARKER_FLAG" 2>/dev/null
+        if ! mkdir -p "$MARKER_DIR" 2>/dev/null || ! touch "$MARKER_FLAG" 2>/dev/null; then
+            echo "k4weread: cannot create $MARKER_FLAG; weread-only mode unavailable" >&2
+            exit 1
+        fi
         sync
         exec "$KOREADER" --kual
         ;;

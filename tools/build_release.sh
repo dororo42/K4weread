@@ -23,6 +23,7 @@ rm -f "$OUT" "${OUT}.sha256"
 # Runtime content: the extension itself plus everything a user needs
 # offline (docs + license). CI artifacts and handoffs are excluded.
 STAGE="K4weread"
+rm -rf "${STAGE}"   # 清掉上次中断留下的暂存文件，保证重复构建结果一致
 mkdir -p "${STAGE}"
 cp -r kual README.md docs LICENSE "${STAGE}/"
 find "${STAGE}" -type d -name '__MACOSX' -prune -exec rm -rf {} + 2>/dev/null || true

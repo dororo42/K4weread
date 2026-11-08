@@ -4,6 +4,9 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   gates:
     runs-on: ubuntu-latest
@@ -20,8 +23,11 @@ jobs:
       - name: XML gates (config.xml)
         run: python3 tools/check_config.py
 
-      - name: Marker-path consistency (k4weread.sh vs docs)
-        run: python3 tools/check_marker_path.py
+      - name: Clone peer plugin repo (cross-repo marker contract)
+        run: git clone --depth 1 https://github.com/dororo42/weread_K4.koplugin.git ../weread_K4.koplugin
+
+      - name: Marker-path consistency (writer / reader / docs)
+        run: python3 tools/check_marker_path.py --peer-repo ../weread_K4.koplugin
 
       - name: Build release + verify sha256
         run: |
@@ -31,8 +37,18 @@ jobs:
           import zipfile, glob
           z = glob.glob('K4weread-v*.zip')[0]
           names = zipfile.ZipFile(z).namelist()
-          assert any(n.startswith('K4weread/kual/') for n in names), names
-          assert 'K4weread/kual/menu.json' in names and 'K4weread/kual/config.xml' in names
-          assert 'K4weread/kual/bin/k4weread.sh' in names
-          print('zip layout OK:', len(names), 'entries')
+          files = {n for n in names if not n.endswith('/')}
+          required = {
+              'K4weread/kual/menu.json',
+              'K4weread/kual/config.xml',
+              'K4weread/kual/bin/k4weread.sh',
+              'K4weread/README.md',
+              'K4weread/LICENSE',
+          }
+          assert required <= files, sorted(files)
+          forbidden = [n for n in files
+                       if n.startswith(('K4weread/handoffs/', 'K4weread/tools/', 'K4weread/.git'))
+                       or '__MACOSX' in n]
+          assert not forbidden, forbidden
+          print('zip layout OK:', len(files), 'files')
           PY
