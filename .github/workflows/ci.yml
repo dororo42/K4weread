@@ -1,0 +1,38 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Shell syntax check (sh -n)
+        run: |
+          find . -name '*.sh' -not -path './.git/*' -print0 | xargs -0 -n1 sh -n
+
+      - name: JSON gates (menu.json)
+        run: python3 tools/check_menu.py
+
+      - name: XML gates (config.xml)
+        run: python3 tools/check_config.py
+
+      - name: Marker-path consistency (k4weread.sh vs docs)
+        run: python3 tools/check_marker_path.py
+
+      - name: Build release + verify sha256
+        run: |
+          sh tools/build_release.sh
+          sha256sum -c K4weread-v*.zip.sha256
+          python3 - <<'PY'
+          import zipfile, glob
+          z = glob.glob('K4weread-v*.zip')[0]
+          names = zipfile.ZipFile(z).namelist()
+          assert any(n.startswith('K4weread/kual/') for n in names), names
+          assert 'K4weread/kual/menu.json' in names and 'K4weread/kual/config.xml' in names
+          assert 'K4weread/kual/bin/k4weread.sh' in names
+          print('zip layout OK:', len(names), 'entries')
+          PY

@@ -1,0 +1,24 @@
+{
+    "items": [
+    {
+        "name": "K4weread",
+        "priority": 0,
+        "items": [
+        {
+            "name": "Start WeRead only",
+            "priority": 1,
+            "action": "bin/k4weread.sh",
+            "params": "start",
+            "internal": "status Starting WeRead only . . ."
+        },
+        {
+            "name": "Start KOReader (full)",
+            "priority": 2,
+            "action": "bin/k4weread.sh",
+            "params": "koreader",
+            "internal": "status Starting KOReader (full) . . ."
+        }
+        ]
+    }
+    ]
+}

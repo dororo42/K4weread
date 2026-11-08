@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- K4weread KUAL extension registration (KDK-1.0 / KUAL 2.7).
+     Deployed to /mnt/us/extensions/k4weread/ (config.xml + menu.json + bin/).
+     Menu structure follows the on-device KOReader extension template:
+     <menus> wrapper + <menu type="json" dynamic="true"> (parse.awk only
+     scans type="json" menu tags; verified against KUAL v2.7 decompiled
+     source and the live device). -->
+<extension>
+    <information>
+        <name>K4weread</name>
+        <version>0.1.0</version>
+        <author>K4weread project</author>
+        <summary>One-tap WeRead-only reader entry for Kindle 4 + KUAL</summary>
+    </information>
+    <menus>
+        <menu type="json" dynamic="true">menu.json</menu>
+    </menus>
+</extension>

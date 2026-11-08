@@ -1,0 +1,7 @@
+# local handoff channel — never commit/push (orbital_handoff)
+handoffs/
+*.local.md
+
+# build artifacts
+*.zip
+*.zip.sha256
