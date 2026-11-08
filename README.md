@@ -5,7 +5,7 @@ Kindle 4 + KUAL 上的一键微信读书入口：**Kindle 桌面 → KUAL → K4
 - 设备：Kindle 4（`0E`/Tequila）与黑色 Kindle 5th Gen / K4B（`23`/Sauza）——同为 FW 4.1.4 / KDK-1.0 / Yoshi，用同一份扩展。
 - 组成：
   - **本仓库**：KUAL 扩展（`kual/`，config.xml + menu.json + bin/k4weread.sh）——写模式标记 → 启动 KOReader；
-  - **[weread_K4.koplugin](https://github.com/dororo42/weread_K4.koplugin) v9.0+**：微信读书插件的 weread-only 模式——消费标记、启动即书架、阅读中 Home 键回书架。
+  - **[weread_K4.koplugin](https://github.com/dororo42/weread_K4.koplugin) v9.1+**：微信读书插件的 weread-only 模式——消费标记、**默认重开上一本微信书**（v9.0 只进书架；无记录/文件消失时回退书架）、阅读中 Home 键回书架。
 - 上游文档：[K4weread 可行性评估报告（2026-11-08）](docs/DESIGN.md)记录了路线选型与全部证据。
 
 ## 工作原理（weread-only 握手）
