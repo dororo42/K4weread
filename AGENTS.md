@@ -22,6 +22,6 @@ Kindle 4 + KUAL 的一键微信读书入口（KUAL 扩展 + weread_K4.koplugin w
 
 - Latest: `handoffs/2026-11-08-172009-k4weread-v9-7-sync/HANDOFF.md`
 - Branch: main @ d4afbf3
-- Status: 审查修复批次（2026-11-08）已完成并提交；weread_K4 的 P1-A 及其修复属未发版工程提交，`v9.7` 仅指已发布 Release，勿据此认定双仓已同步收口。待办：用户明确发版时才递增版本，真机 A–D 清单待设备接入后重跑；详见该 HANDOFF.md 末尾「审查后修复批次」。未递增版本、未重写发布资产。
+- Status: v0.1.1 / 插件 v9.8 发布批次（2026-11-08）：版本已递增，tag 与 GitHub Release 资产由 `release.yml` workflow 产出；K4（B00E）已部署，K4B（B023）仍为 v8.4 待升级；真机 A–D 清单待按键验收。详见该 HANDOFF.md 末尾「审查后修复批次」与 `LOG.md`。
 
 任何 agent 开始工作前，先读上面的 HANDOFF.md。这份指针由 orbital_handoff 维护，手工交接时请同步更新。

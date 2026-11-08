@@ -27,6 +27,18 @@
 - **提交**：两仓各一次主提交（提交信息说明为什么 / 改了什么 / 如何验证），随后 `env -u GH_TOKEN git push origin main`；`handoffs/` 未入库（本地交接通道）。
 - **边界**：未递增版本、未打 tag、未重写发布资产、未发 Release（发版纪律：用户说「发布」才执行）；真机 A–D 清单仍未执行。
 
+## 2026-11-08 · v0.1.1 / v9.8 发版（两仓，用户明确授权）
+
+- **为什么**：用户指示「进行发版，tag，发包，两仓都执行」——触发发版纪律（说「发布」才递增版本）。核实发现两仓只有 `ci.yml`，无发布通道，而纪律要求包必须由 GitHub workflow 产出。
+- **改了什么**：
+  - 版本源：本仓 `kual/config.xml` `0.1.0 → 0.1.1`；插件仓 `_meta.lua` / `main.lua` `0.6.0-k4-v9.7 → 0.6.0-k4-v9.8`，`build_commit → e4f8d1e`。
+  - 新增两仓 `.github/workflows/release.yml`：`v*` tag push → checkout(fetch-depth 0) → `tools/build_release.sh` → `sha256sum -c` → `gh release create` 上传 zip + zip.sha256（`contents: write`）。
+  - 文档：README / INSTALL / AGENTS 同步版本与依赖行（v9.8+），插件 README 把「未发版修复」章节转为正式 v9.8 变更日志。
+- **沿革**：`v0.1.0`（2026-11-08 首个 Release，KUAL 扩展 + 握手）→ `v0.1.1`（审查修复批次：跨仓契约护栏、门禁硬化、打包幂等、文档对齐）；插件 `v9.7`（样式直达）→ `v9.8`（审查修复 + P1-A 传输层接线，默认关）。
+- **纪律**：包**不由本机手工构建**；本机只做源码级检查与门禁，zip + sha256 全部由 workflow 在 GH runner 产出并上传。
+- **指纹段**：资产 sha256 由 workflow 产出的 `.zip.sha256` 记录，并写入对应 GitHub Release 正文（PATCH 收尾）。
+- **如何验证**：待 tag 推送后核对两仓 release run 结论、Release 资产清单与 `sha256sum -c`；结果补记于此。
+
 ## 2026-11-08 · KUAL 扩展部署到 K5（用户报"菜单缺失"后的修复）
 
 - **为什么**：用户在 K5（192.168.2.157，KOReader v2026.07.1，内含 weread_K4 v8.4）的 KUAL 菜单里找不到本项目入口——K5 只装过 koreader/k4refresh/fpcheck/gawk 扩展，`k4weread` 扩展从未部署到该机。
