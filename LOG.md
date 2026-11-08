@@ -38,6 +38,7 @@
 - **纪律**：包**不由本机手工构建**；本机只做源码级检查与门禁，zip + sha256 全部由 workflow 在 GH runner 产出并上传。
 - **指纹段**：资产 sha256 由 workflow 产出的 `.zip.sha256` 记录，并写入对应 GitHub Release 正文（PATCH 收尾）。
 - **如何验证**：待 tag 推送后核对两仓 release run 结论、Release 资产清单与 `sha256sum -c`；结果补记于此。
+- **核实结果（出包收尾）**：tag `v0.1.1` / `v9.8` 推送后，release run `42484179044` / `42484182242` 与 CI run `42484179082` / `42484125931` 均 `success`；两仓 Release 双资产齐全，指纹 `eba7eb4f478dad8478da2f6cea6b81f50e17d66805f56d12a05320ae88dae23e`（K4weread v0.1.1）与 `e35e727d8dfb897e7afa888dde38d5ea3ad6c53893657299a9c4b1e1b39bfd89`（weread v9.8）；两仓 Release 正文已 PATCH「沿革 + 指纹段」，`release.yml` 顶部同步补记沿革与指纹，收尾 commit + push 一并完成。K4B（B023）仍待升级，真机 A–D 清单待按键验收。
 
 ## 2026-11-08 · KUAL 扩展部署到 K5（用户报"菜单缺失"后的修复）
 
