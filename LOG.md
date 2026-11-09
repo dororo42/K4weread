@@ -53,3 +53,11 @@
 - **改了什么（插件仓）**：`weread/lib/qr_login.lua:_show_qr` 覆盖 `key_events` 为 `Close`（Back → `cancel()` 停轮询）与 `ExitApp`（Menu → 先取消再广播原生 `Exit`），按真机 `readermenu.lua:79` 的两层格式；弹出时 transient 提示两个键；`ui/event` 按需 require 避免影响其它 spec。`spec/qr_login_spec.lua` 扩桩并新增 5 例；README 登录节与变更日志登记；本仓 `docs/REAL_DEVICE_TEST.md` 补 D10 验收项。
 - **如何验证**：TDD 红基线 4 例失败 → 修复后 `qr_login_spec` 11/11、全量 busted **445/0**、`luac -p` 全部 Lua、`luacheck` 0 warnings / 0 errors、module-map 0 孤儿、version-sync 通过。
 - **边界**：未递增版本、未发版、未打 tag；`showBusy` 获取二维码阶段仍不可取消（有 10/20s 超时）；OTP 输入框沿用自带 Cancel；真机 D10（首次登录 + 续期两条路径）待用户按键验收。
+
+## 2026-11-10 · 登录恢复链缺陷核实与修复（K5 实证，本仓仅核实+记账）
+
+- **为什么**：用户报「续期成功但右下角仍提醒过期、上报离线」。SSH 拉设备日志核实：会话真死（续期后 read 持续 `-2012 登录超时`），「续期成功」为假阳性（renewal 返回 succ=1 + 8 字符无效 wr_skey）；重新扫码后 footer 残留 = relogin 清锁存先于 accepted-report 边沿 → `LoginHint.hide` 无调用者；report 停于 `account_cleared` 无人重启。
+- **核实范围**：本仓（握手侧）`kual/` + `tools/` 无 read_report/LoginHint/renew 牵连——本仓无需改码；修复全落插件仓 4 处（TDD 8 例红→绿；CI 453/0 绿 run `42720908234`；`transport_spec` 2 例为 `ed9c5da` 收敛提交的 spec 缺口，一并修正 `d833874`）。
+- **部署**：K5（192.168.2.157）备份 `weread_K4.koplugin-backup-20261110-pre-loginfix.tgz` 后同步 6 个 runtime 文件（k4tls/transport/client/qr_login/read_report/common），md5 逐字一致；KOReader 未重启，新代码下次会话生效。footer 残留清除：重启后任一次登录成功（新 hide 兜底自动清）或完整 KOReader 手动关闭 footer 自定义文本。
+- **如何验证**：见插件仓 README 2026-11-10 条目与 CI run；真机 D11（本仓 `docs/REAL_DEVICE_TEST.md` 新增）待按键验收。
+- **边界**：未递增版本/未发版/未打 tag（发版纪律）；K4（B00E）设备离线未部署（待在线同步同 6 文件）；LAN 代理当日不通、git push 直连成功（网络坑记忆更新）。
