@@ -17,6 +17,9 @@ import sys
 
 ALLOWED_KEYS = {"name", "priority", "action", "params", "internal", "items"}
 EXPECTED_ACTIONS = {"bin/k4weread.sh"}
+# 2026-11-10 audit: the handshake contract depends on the "start" branch; a
+# typoed or repurposed params value must fail the gate, not pass silently.
+ALLOWED_PARAMS = {"start", "koreader"}
 
 
 def fail(message: str) -> int:
@@ -35,6 +38,7 @@ def main() -> int:
         return fail("items must be a non-empty list")
 
     seen_actions = []
+    seen_params = []
 
     def walk(node) -> str:
         if not isinstance(node, dict):
@@ -44,6 +48,7 @@ def main() -> int:
             return f"unknown menu option(s) {sorted(unknown)} in {node.get('name')}"
         if "action" in node:
             seen_actions.append(node["action"])
+            seen_params.append(node.get("params"))
         for child in node.get("items", []):
             error = walk(child)
             if error:
@@ -58,6 +63,10 @@ def main() -> int:
     if not seen_actions or set(seen_actions) != EXPECTED_ACTIONS:
         return fail(f"unexpected action set {seen_actions}; "
                     f"expected only {sorted(EXPECTED_ACTIONS)}")
+    for item_params in seen_params:
+        if item_params not in ALLOWED_PARAMS:
+            return fail(f"unexpected action params {item_params!r}; "
+                        f"expected one of {sorted(ALLOWED_PARAMS)}")
     print(f"menu.json OK: {len(items)} top-level item(s), actions={seen_actions}")
     return 0
 

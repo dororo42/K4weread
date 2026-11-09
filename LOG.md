@@ -71,3 +71,12 @@
 - **如何验证**：两仓 CI + release workflow 全绿（本仓 run `42723704308`、插件仓 `42723717007`）；Release 双资产齐全且均为 Latest；资产指纹 K4weread v0.1.2 = `78695627…ae7dd43`、weread_K4 v9.9 = `bd7ac215…17ddc6`（已入 `release.yml` 顶部与 Release 正文）。
 - **部署**：K5 同步 `_meta.lua`/`main.lua`（设备 `_meta` = `0.6.0-k4-v9.9`）；**K4（B00E/192.168.2.151）离线未部署**（待在线：6 个 runtime 文件 + `_meta`/`main`，或直接解包 v9.9 Release zip）。
 - **边界**：handoff 073303 两套文末追加本发版节（写契约加法）；后续动作见交接链头。
+
+## 2026-11-10 · D10 真机验证核实 + 复审 🟢 清理批（skill 双副本同步 / params 门禁 / 工作区清理）
+
+- **D10 核实**：设备日志佐证 23:56–23:57 用户完成一轮验证循环——33 次上报全成功后清账号弹码 → 两次 getLoginInfo 轮询（k4tls 正常超时重试）→ 23:57:21 login completed + report started reason=relogin；多轮弹码-登录循环无卡死、无错误、无残留。Back/Menu 的具体按键行为以用户确认为准（dismiss/Exit 无插件日志行，日志只能佐证循环闭环）。
+- **skill 双副本同步（🟡-2 收口）**：`.zcode/skills/orbital_handoff/scripts` 从 `.codebuddy` 同步（check_staleness.py / validate_handoff.py 两文件漂移），`unittest` 42 项回归全绿——VERY_STALE 误报根除。
+- **🟢-10 落地**：`tools/check_menu.py` 增加 params 白名单（start/koreader）；负向验证恶意 params（reboot）rc=1 拦截。
+- **🟢-7 落地**：工作区残留 `K4weread-v0.1.0.zip` + `.sha256` 清理（untracked，.gitignore 本就忽略）。
+- **如何验证**：门禁正向全绿 + 负向拦截；skill 42 项回归 OK；D11 后续观察点（续期路径自然过期时看脚标同步消失）交由用户日常使用，见交接链头。
+- **边界**：K4（B00E）仍离线；复审其余 🟢（checkout pin SHA、k4tls 搜索顺序等）留下一批。
