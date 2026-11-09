@@ -17,6 +17,27 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
+# 2026-11-10 audit: mirror the peer repo's release guards (plugin
+# tools/build_release.sh) — a release must be a clean, tagged commit whose
+# tag name equals the packaged version, or the zip ships under the wrong
+# name (the v9.7 false-baseline lesson).
+if [ -n "$(git status --porcelain)" ]; then
+    echo "error: working tree is not clean; commit fixes and docs together" >&2
+    git status --porcelain >&2
+    exit 1
+fi
+TAG="v${VERSION}"
+if ! git rev-parse -q --verify "refs/tags/${TAG}^{commit}" >/dev/null; then
+    echo "error: no tag ${TAG} for version ${VERSION}" >&2
+    exit 1
+fi
+if [ "$(git rev-parse HEAD)" != "$(git rev-parse "refs/tags/${TAG}^{commit}")" ]; then
+    echo "error: HEAD != tag ${TAG}; bump the version before packaging" >&2
+    echo "  HEAD: $(git rev-parse --short HEAD)" >&2
+    echo "  tag : $(git rev-parse --short "refs/tags/${TAG}^{commit}")" >&2
+    exit 1
+fi
+
 OUT="K4weread-v${VERSION}.zip"
 rm -f "$OUT" "${OUT}.sha256"
 
