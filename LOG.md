@@ -61,3 +61,13 @@
 - **部署**：K5（192.168.2.157）备份 `weread_K4.koplugin-backup-20261110-pre-loginfix.tgz` 后同步 6 个 runtime 文件（k4tls/transport/client/qr_login/read_report/common），md5 逐字一致；KOReader 未重启，新代码下次会话生效。footer 残留清除：重启后任一次登录成功（新 hide 兜底自动清）或完整 KOReader 手动关闭 footer 自定义文本。
 - **如何验证**：见插件仓 README 2026-11-10 条目与 CI run；真机 D11（本仓 `docs/REAL_DEVICE_TEST.md` 新增）待按键验收。
 - **边界**：未递增版本/未发版/未打 tag（发版纪律）；K4（B00E）设备离线未部署（待在线同步同 6 文件）；LAN 代理当日不通、git push 直连成功（网络坑记忆更新）。
+
+## 2026-11-10 · v0.1.2 / 插件 v9.9 发版（两仓，用户授权「推送和发布」）
+
+- **为什么**：K5 重登后真机验证通过（23:39:36 login completed → report started reason=relogin → 23:40:06 read report success；footer custom_text 恢复 KOReader 默认、快照键清除——hide 兜底/重启 report/relogin 边沿三项修复全部实证生效），触发发版纪律。同批落地 2026-11-09 复审 🟡-1（本仓 build_release.sh 三重防呆）。
+- **改了什么（本仓）**：`tools/build_release.sh` 脏工作区/tag 存在/HEAD==tag 三重校验（负向矩阵 rc=1×3 + tag@HEAD rc=0 已验）；`ci.yml` 移除普通 push 上的打包步骤（无 tag 会被防呆拒绝）；zip 布局白名单断言迁入 `release.yml`；`config.xml` 0.1.1→0.1.2；README/INSTALL 依赖行 v9.9+。
+- **改了什么（插件仓）**：`_meta.lua`/`main.lua` 0.6.0-k4-v9.8→**0.6.0-k4-v9.9**（build_commit=ebe8f0f）；README 两段「未发版修复」转正式 v9.9 changelog。
+- **网络坑**：直连 443 当日两次断连（push 首试失败），LAN 代理恢复后走代理推送成功——与 11-09 恰好相反，两条路径都要试。
+- **如何验证**：两仓 CI + release workflow 全绿（本仓 run `42723704308`、插件仓 `42723717007`）；Release 双资产齐全且均为 Latest；资产指纹 K4weread v0.1.2 = `78695627…ae7dd43`、weread_K4 v9.9 = `bd7ac215…17ddc6`（已入 `release.yml` 顶部与 Release 正文）。
+- **部署**：K5 同步 `_meta.lua`/`main.lua`（设备 `_meta` = `0.6.0-k4-v9.9`）；**K4（B00E/192.168.2.151）离线未部署**（待在线：6 个 runtime 文件 + `_meta`/`main`，或直接解包 v9.9 Release zip）。
+- **边界**：handoff 073303 两套文末追加本发版节（写契约加法）；后续动作见交接链头。

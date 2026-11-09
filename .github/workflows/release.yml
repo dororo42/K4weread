@@ -1,6 +1,7 @@
 # 版本沿革 / 资产指纹（出包收尾维护；注释不影响 workflow 行为）
 # v0.1.0  2026-11-08  K4weread-v0.1.0.zip  bb85bb3735f176de5c07a9cca6c7fa76ef897a6c0b7340752f55e00f39cbcdfd
 # v0.1.1  2026-11-08  K4weread-v0.1.1.zip  eba7eb4f478dad8478da2f6cea6b81f50e17d66805f56d12a05320ae88dae23e
+# v0.1.2  2026-11-10  K4weread-v0.1.2.zip  78695627f4ed5bc06d5469ee53ac99e901f3e344a96f2ab528328f6a9ae7dd43
 name: release
 
 # Release assets are produced ONLY here (never by hand on a workstation).
