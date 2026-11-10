@@ -116,3 +116,10 @@
 
 - 用户对三项留拍板逐项裁决（均按建议）：🟢-3 选项 a（client.lua 注释写明 sink 重试前提，`3176e5d`，零行为变更，本机 busted 463/0）；🟢-9 维持 U17-1 上游语义（零改动）；报告归档维持外部留存（不入公开仓）。
 - **至此 2026-11-09 复审报告 21 项（3🟡+10🟢）全部闭环**。剩余外部依赖：D11 两观察点、K4（B00E）上线部署（暂缓）。
+
+## 2026-11-10 · Phase 2/3 触发条件实测（K5 冷启动 + OOM + 防护真机首证）
+
+- **触发条件数据化**（评估报告 §七「冷启动 >10s、OOM」）：①冷启动主动实测（kill→flag→koreader.sh --kual）：launch→`[WeRead] initialized`（v9.12 生效，release_base=cdba73d）→reader_ready done 全程 **~9s**（23:44:24→33），加开书渲染（历史 opening→ready 2s）**用户全程 ~11s——贴 10s 阈值边缘**（日均一次、差 1s 无感级，不触发 Phase 2，登记为接近阈值事实）；②OOM 排查：crash.log 全量 grep out-of-memory/oom/cannot-allocate **零痕迹**。
+- **续期假阳性防护真机首证**：23:44:35 会话再次过期（-2012），ProgressSync 自动续期被新防护正确拦截——`renewal rejected (expired): renewal returned succ=1 without a usable session key`（client.lua:777）。老代码此处会假报成功误导 ProgressSync；防护按设计分类 expired 并走重登提示。**修复价值线上实证**。
+- **设备状态提示**：K5 会话已死（用户需重新扫码）；D11 续期路径观察需等会话「临期未死」状态。
+- **边界**：v9.12 在 K5 生效（initialized version=0.6.0-k4-v9.12）；上游 watchlist 反向贡献评估进行中（finlater/weread.koplugin v1.7.0 L1/L2 可移植性分析）。
