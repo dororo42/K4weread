@@ -104,3 +104,10 @@
 - **R4 bench PASS**（报告 `~/reports/2026-11-10-K4weread-R4-bench报告-libk4tls-vs-LuaSec-K5真机.md`）：K5 真机 n=10/后端，k4tls MEAN 0.837s vs LuaSec 0.866s（快 3.4%，MAX 更低），10/10 成功——评估报告 §九 R4 条款「性能持平即换」满足。
 - **现状修正**：K5 `koreader.sh` 已含 `export WEREAD_TLS_BACKEND=k4tls`（生产闸门已翻，非交接登记动作）；Phase 1 网络组件线（P1-A + R4）就此闭环，Phase 2/3 触发条件复核后维持观察（TLS 慢已被排除）。
 - **遗留**：① bench 脚本入库（dev/bench_tls.lua）+ INSTALL 登记 k4tls 部署步骤——随插件仓下一批；② K4（B00E）仍离线，升级路径同 v9.12 zip。
+
+## 2026-11-10 · R4 bench 结论入库 + K4 部署暂缓（用户指示）
+
+- **bench 工具与口径入库（插件仓 01dd053，CI 42923257123 绿）**：`dev/bench_tls.lua`（通用化：N 参数化 + 首跑结果与用法注释，luacheck 0/0）；README 新增「传输后端（Rust TLS，可选）」节——切换方法（`koreader.sh` export）/ 回退语义 / R4 结论 / 复测命令。
+- **K4（B00E）部署暂缓**：用户指示；全天 5 次探测均离线。上线后部署路径不变（解包 v9.12 zip 覆盖 + `_meta` 确认）。
+- **🟢-2 结论化**：k4tls 默认 8MB 响应上限与 `client.lua MAX_BINARY_BYTES`（调用方限额 8MB）一致，文本响应实际远低于该值——生产（k4tls 已翻闸）与 LuaSec 无实际行为差异，无需改码；结论登记交接链头。
+- **网络口径**：本轮直连与代理交替可用（push 先代理失败后直连成功），两路都要试的口径维持。
