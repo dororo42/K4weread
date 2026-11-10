@@ -123,3 +123,11 @@
 - **续期假阳性防护真机首证**：23:44:35 会话再次过期（-2012），ProgressSync 自动续期被新防护正确拦截——`renewal rejected (expired): renewal returned succ=1 without a usable session key`（client.lua:777）。老代码此处会假报成功误导 ProgressSync；防护按设计分类 expired 并走重登提示。**修复价值线上实证**。
 - **设备状态提示**：K5 会话已死（用户需重新扫码）；D11 续期路径观察需等会话「临期未死」状态。
 - **边界**：v9.12 在 K5 生效（initialized version=0.6.0-k4-v9.12）；上游 watchlist 反向贡献评估进行中（finlater/weread.koplugin v1.7.0 L1/L2 可移植性分析）。
+
+## 2026-11-10 · 上游反向贡献评估落档（watchlist 推进）
+
+- **评估报告**：`~/reports/2026-11-10-K4weread-Phase23触发条件实测与上游反向贡献评估.md`。
+- **L1（F-21 默认总时限）**：上游 v1.7.0 client.lua:248 默认 `total_timeout=-1`——慢滴冻结缺陷实锤（fork 实测 26.9s 冻结同款）；调用方审计（downloader 180 显式/qr_login {10,20}/updater 自管）证明移植安全；改动 ~2 行。**建议 issue-first**（附实测数据），对外提交待用户确认。
+- **L2（共享分类器+单次重试 F-23）**：上游 client.lua 零重试、分类散落；移植成本中等（PluginUtil 词表 + sink 重建语义），建议独立 PR 跟进。
+- 上游活跃度：finlater/weread.koplugin 1062 stars / 41 open issues / push 2026-11-03——有受众。
+- **边界**：未向外部提交任何 issue/PR（对外动作待用户确认）；冷启动实测与防护首证见前节。
