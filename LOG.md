@@ -80,3 +80,11 @@
 - **🟢-7 落地**：工作区残留 `K4weread-v0.1.0.zip` + `.sha256` 清理（untracked，.gitignore 本就忽略）。
 - **如何验证**：门禁正向全绿 + 负向拦截；skill 42 项回归 OK；D11 后续观察点（续期路径自然过期时看脚标同步消失）交由用户日常使用，见交接链头。
 - **边界**：K4（B00E）仍离线；复审其余 🟢（checkout pin SHA、k4tls 搜索顺序等）留下一批。
+
+## 2026-11-10 · 复审 🟢 清理批（k4tls 内置库优先 / checkout pin SHA）+ K4 二次探测
+
+- **为什么**：交接链头登记的复审余项继续推进。
+- **改了什么（插件仓 ac34e11）**：🟢-8 `k4tls._load` 搜索顺序改为模块同目录 `libk4tls.so` 优先（系统同名旧库不再静默遮蔽随包内置库，旧 ABI 风险）；`k4tls_spec` 顺序断言对调；🟢-6 qr_login 缩进。**改了什么（两仓）**：🟢-5 `actions/checkout@v4` 固定到 commit SHA `11d5960a…`（4 处 workflow）。
+- **如何验证**：k4tls_spec 42/0、qr_login_spec 13/0（本机 shim）；luac -p / module-map / version-sync 全绿；两仓 CI 全绿（插件仓 run `42731375066` 全量 busted、本仓 `42731381825`——pin SHA 后的新 workflow 自身也被验证）。不发版，随下一批。
+- **K4（B00E）二次探测**：仍离线（No route to host）——部署待办维持。
+- **边界**：🟢-2（k4tls 8MB 上限语义）/🟢-9（轮询提示）为行为设计项，R4/用户拍板后再动；D11 剩余两点为用户日常观察。
