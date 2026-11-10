@@ -131,3 +131,9 @@
 - **L2（共享分类器+单次重试 F-23）**：上游 client.lua 零重试、分类散落；移植成本中等（PluginUtil 词表 + sink 重建语义），建议独立 PR 跟进。
 - 上游活跃度：finlater/weread.koplugin 1062 stars / 41 open issues / push 2026-11-03——有受众。
 - **边界**：未向外部提交任何 issue/PR（对外动作待用户确认）；冷启动实测与防护首证见前节。
+
+## 2026-11-10 · K5 重登核实（防护二证）+ 上游贡献线终态（用户决策：不提 issue）
+
+- **K5 重登核实（v9.12 运行下）**：23:57:54 ProgressSync 自动续期被防护**第二次**正确拦截（`client.lua:777 expired` 分类）；23:58:15 account_cleared → 23:58:34 `login completed` + report started reason=**relogin**（maybe_start 修复生效）→ 23:59:04 **read report success count=1**。重登闭环第三次真机实证。
+- **上游反向贡献线终态（用户决策：不提 issue）**：L1/L2 评估材料留存 `~/reports/2026-11-10-K4weread-Phase23触发条件实测与上游反向贡献评估.md` 作参考，**不向 finlater 上游提交任何 issue/PR**；watchlist 项从「待确认」划为「终态关闭」。/tmp/upstream_weread 临时克隆清理。
+- **边界**：K4（B00E）部署维持暂缓；D11 剩续期路径观察点（等会话临期未死场景）。
