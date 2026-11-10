@@ -88,3 +88,12 @@
 - **如何验证**：k4tls_spec 42/0、qr_login_spec 13/0（本机 shim）；luac -p / module-map / version-sync 全绿；两仓 CI 全绿（插件仓 run `42731375066` 全量 busted、本仓 `42731381825`——pin SHA 后的新 workflow 自身也被验证）。不发版，随下一批。
 - **K4（B00E）二次探测**：仍离线（No route to host）——部署待办维持。
 - **边界**：🟢-2（k4tls 8MB 上限语义）/🟢-9（轮询提示）为行为设计项，R4/用户拍板后再动；D11 剩余两点为用户日常观察。
+
+## 2026-11-10 · RESUME 接手 + 插件仓 v9.12 收尾（并发 agent 批次审计）
+
+- **RESUME（orbital_handoff）**：两仓链头核验——本仓 073303 一致；插件仓发现并发 agent（CodeBuddy）已延续链推进 v9.10（扫码提示防遮挡+TouchMenu化+ChangeLog 双语重构）/ v9.11（上游 U17-1/U17-2 TDD 8 例 462/0）/ v9.12（QR 提示条显示修复 463/0）三批次并发版，新链头 `212840-weread-k4-v9-11-upstream-qr-fixes`（Continues from 073303，闭环表完整）。
+- **审计结论**：v9.12 tag/Release/双资产在线（`gh api` 权威，`gh release view` 曾瞬时 not found 不可作准）；CI 最终 success（中途 1 次 version 字面量失败被 db4da82 补丁修复）；缺口仅收尾三件。
+- **收尾（2de2676）**：release.yml 沿革补 v9.12 指纹 `0a44d83f…dd7f820`；AGENTS Status → db4da82/v9.12；212840 套件文末追加收尾节（本地）。
+- **K5 升级准备**：v9.12 zip（60 文件）已下载至 `/tmp/weread_K4.koplugin-v9.12.zip` 并 sha256 校验 OK；**设备升级暂缓——K5 本轮超时离线**（当日多次在线，间歇在线已知坑），上线后：备份 → 解包 zip 覆盖 `/mnt/us/koreader/plugins/` → md5 抽验 + `_meta` 确认。
+- **K4（B00E）**：全天多次探测均离线，部署待办维持（升级路径同为解包 v9.12 zip）。
+- **边界**：R4 bench（Phase 1 闸门）需设备在线，待 K5/K4 任一上线执行；套件文末已登记 v9.12 收尾。
