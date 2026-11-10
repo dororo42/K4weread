@@ -97,3 +97,10 @@
 - **K5 升级准备**：v9.12 zip（60 文件）已下载至 `/tmp/weread_K4.koplugin-v9.12.zip` 并 sha256 校验 OK；**设备升级暂缓——K5 本轮超时离线**（当日多次在线，间歇在线已知坑），上线后：备份 → 解包 zip 覆盖 `/mnt/us/koreader/plugins/` → md5 抽验 + `_meta` 确认。
 - **K4（B00E）**：全天多次探测均离线，部署待办维持（升级路径同为解包 v9.12 zip）。
 - **边界**：R4 bench（Phase 1 闸门）需设备在线，待 K5/K4 任一上线执行；套件文末已登记 v9.12 收尾。
+
+## 2026-11-10 · K5 升级 v9.12 + R4 bench 执行（设备在线窗口）
+
+- **K5 升级 v9.12**：备份 `weread_K4.koplugin-backup-20261110-pre-v912.tgz`（1.5MB）→ 上传 Release zip（本地 sha256 预校验，设备无 sha256sum）→ 解包覆盖 → `_meta` = `0.6.0-k4-v9.12`，4 个关键文件 md5 与 Release zip 逐字一致。KOReader 重启生效（用户侧）。
+- **R4 bench PASS**（报告 `~/reports/2026-11-10-K4weread-R4-bench报告-libk4tls-vs-LuaSec-K5真机.md`）：K5 真机 n=10/后端，k4tls MEAN 0.837s vs LuaSec 0.866s（快 3.4%，MAX 更低），10/10 成功——评估报告 §九 R4 条款「性能持平即换」满足。
+- **现状修正**：K5 `koreader.sh` 已含 `export WEREAD_TLS_BACKEND=k4tls`（生产闸门已翻，非交接登记动作）；Phase 1 网络组件线（P1-A + R4）就此闭环，Phase 2/3 触发条件复核后维持观察（TLS 慢已被排除）。
+- **遗留**：① bench 脚本入库（dev/bench_tls.lua）+ INSTALL 登记 k4tls 部署步骤——随插件仓下一批；② K4（B00E）仍离线，升级路径同 v9.12 zip。
