@@ -171,3 +171,16 @@
 - **改了什么（插件仓 c67d305）**：①`release.yml` 打包前新增 fetch 步骤（从 K4WereadRust release 资产匿名下载 + sha256 固化校验 `edb6dc76…` → 放入 weread/lib/）；②`build_release.sh` 干净树检查**精确豁免该 untracked 路径**（本地模拟实证：不豁免则 CI 必失败）+ .so 追加进 zip 经临时目录构造包内相对路径（git archive --prefix 不落盘，直接 zip 报 Nothing to do）；③`ci.yml` 新增资产哨兵（每次 push 校验资产可达+sha256）。
 - **如何验证**：本地全链模拟（fetch→sha256→tag→build→**zip 含 weread_K4.koplugin/weread/lib/libk4tls.so**→包 sha256 一致）通过；负向（其他 untracked 仍拒绝、HEAD≠tag 拒绝）通过；CI 绿（run `43118438330`，含新哨兵步骤）。**下次发版（v9.13）起 Release zip 自带 libk4tls.so**。
 - **边界**：不发版（纪律）；真机双机现役 .so 与 CI 产物 md5 一致无需重部；上游 PR #230 仍 OPEN。
+
+## 2026-11-12 · 更正记录：设备时钟正常（此前「快约 30 小时」结论有误）
+
+- **更正**：11-11 记录的「两台设备时钟比真实时间快约 30 小时」**结论错误**。当日设备 `date` 实测输出 `Thu Nov 12 07:31:40 GMT+08:00`——与真实 CST 时间一致；此前把设备日志的 UTC 时间戳（11-10 23:44 UTC = 11-11 07:44 CST）误读为 CST。两台设备时钟**正常**。
+- **连带的日志时间戳解读更正**：11-10「23:58 login completed」实际发生在北京时间 11-11 07:58（早晨）；各次会话过期/重登的绝对时间按此平移，相对节律不变。
+- **修正原因**：回答用户「K5 为何经常掉线」时对两台设备的 suspend 节律做对照分析，发现时间线矛盾，追溯为时区误读。
+
+## 2026-11-12 · K5 掉线根因判定：KOReader suspend（非故障）
+
+- **现象对照**：K5（192.168.2.157）频繁 SSH 超时（11-10/11-12 多轮），K4（192.168.2.151）上线后持续可达。
+- **数据**：两台设备 crash.log 均有密集 `reading time report stopped: reason= suspend` 事件——K5 在无人操作时段反复 suspend（含 11-12 07:17 最近一次），K4 因用户活跃阅读（success_count=340、最新 07:28 read report success）频繁唤醒。
+- **根因**：KOReader suspend 时断开 WiFi（dropbear 随之不可达），唤醒后重连。K5 掉线时段 ≈ 设备休眠时段（用户说「K5 在线」均为刚唤醒后）；K4「在线正常」= 正被活跃使用。**非硬件故障、非 DHCP 漂移（两台 IP 始终稳定）、非网络故障**。
+- **选项**（按需）：测试前唤醒 K5（现状工作流）；K5 插电阅读（充电时休眠策略不同）；KOReader keep_alive 插件 networking 模式保活（menu 已有，代价耗电）。维持现状亦可——现有「设备上线即部署」实践已适配。
