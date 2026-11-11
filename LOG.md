@@ -163,3 +163,11 @@
 - **K4 bench 对照（R4 报告建议）**：k4tls MEAN 0.833s vs LuaSec 0.921s（**快 9.6%**，n=10 全成功）——R4 结论跨设备强化（K5 +3.4% / K4 +9.6%）。数据已入 R4 报告。
 - **结构性发现：libk4tls.so 无分发渠道**——.so（1.19MB）不在 git、不在 Release zip，仅 11-08 手工部署 K5；**Release 渠道安装的设备全部实际运行 LuaSec**（回退语义正常无功能影响）。已从 K5 拷 .so 至 K4（md5 一致）。**待决策**：.so 入库 / CI 交叉编译 / 部署文档化（三选一）。
 - **AGENTS.md**：两仓 Current Handoff 指针与 Status 更新提交（bcedf0b / a787cc0）。
+
+## 2026-11-11 · .so 分发渠道选 2（CI 交叉编译）落地
+
+- **用户拍板**：.so 分发三选一选 **2（CI 交叉编译）**。实施中发现 K4WereadRust 仓 CI **已具备** so-armel-glibc job（F-09，2026-11-09 上线，工具链 sha256 固化）——方案落地为**打通链路**而非重搭工具链。
+- **改了什么（K4WereadRust）**：release `libk4tls-v0.1.0`（CI 产物 libk4tls.so，md5 `8b89393a` 与 K5/K4 现役逐字一致——CI artifact 即现役来源实证）。
+- **改了什么（插件仓 c67d305）**：①`release.yml` 打包前新增 fetch 步骤（从 K4WereadRust release 资产匿名下载 + sha256 固化校验 `edb6dc76…` → 放入 weread/lib/）；②`build_release.sh` 干净树检查**精确豁免该 untracked 路径**（本地模拟实证：不豁免则 CI 必失败）+ .so 追加进 zip 经临时目录构造包内相对路径（git archive --prefix 不落盘，直接 zip 报 Nothing to do）；③`ci.yml` 新增资产哨兵（每次 push 校验资产可达+sha256）。
+- **如何验证**：本地全链模拟（fetch→sha256→tag→build→**zip 含 weread_K4.koplugin/weread/lib/libk4tls.so**→包 sha256 一致）通过；负向（其他 untracked 仍拒绝、HEAD≠tag 拒绝）通过；CI 绿（run `43118438330`，含新哨兵步骤）。**下次发版（v9.13）起 Release zip 自带 libk4tls.so**。
+- **边界**：不发版（纪律）；真机双机现役 .so 与 CI 产物 md5 一致无需重部；上游 PR #230 仍 OPEN。
