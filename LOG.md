@@ -148,3 +148,11 @@
 - **数据**：触发条件逐条判定（冷启动边缘/OOM 无/形态要求未提出）；**K5 磁盘实测修正原假设**——KOReader 全部占用 98MB（fonts 21M/frontend 9M/plugins 4 个），「字体 176M→70M」瘦身空间在实测设备不成立；fork 双轨维护成本被 v9.10-9.12 迭代频率部分实证。
 - **结论**：**不建议现在推进 Phase 2**（两条硬指标不满足 + 收益全无感级 + 成本 2-4 周回归风险）。决策路径三分支已列：体验动机→维持现状；平台动机→可立项但建议先做 1 天级裁剪预演；在意冷启动→先做 luajit 启动剖析而非裁剪。
 - **边界**：本评估为只读分析，未动任何项目源码。
+
+## 2026-11-11 · L1 反向贡献 PR 已提交（finlater PR #230，用户确认执行）
+
+- **决策演进**：11-10 拍板「不提 issue」→ 11-11 用户确认改为直接提 PR（跳过 issue，技术方案来自 K4 项目真机验证的 F-21）。
+- **执行**：fork `dororo42/weread.koplugin`（finlater 官方 fork）基于上游 main 最新（cf9eeeb/v1.7.0）开分支 `fix/request-total-deadline` → 上游风格最小 patch（client.lua:248 默认 `total_timeout=-1`→`block*2` + 8 行注释；显式 table 语义保持上游原样——最小 diff 原则）→ `2862b30` push → **PR #230**（中文描述：问题 26.9s 实测 + 修复逻辑 + 兼容性审计表）。
+- **K4 项目的角色**：真机验证过的参考实现，patch 按上游形态重写（不从 K4 分支直接 PR——client.lua 深度分叉）。
+- **如何验证**：patch luac -p 通过；diff 仅 8 行（1 文件）；PR 链接 https://github.com/finlater/weread.koplugin/pull/230 待上游审阅。
+- **边界**：PR 以 dororo42 身份公开；上游合并与否不在本仓控制面内；L2（共享分类器+重试）仍留 watchlist（评估材料在 reports/）。
