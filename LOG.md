@@ -190,3 +190,12 @@
 - **用户指示**：v9.13 暂缓发包。.so 分发链路（选 2）已就绪待用——下次发版时 release.yml 自动 fetch libk4tls.so（sha256 固化校验）并打包，链路无需再动。
 - **当前未发版内容**：仅本批文档与 workflow 变更（fetch 步骤/哨兵/防呆豁免/追加修正），无运行时代码变更——暂缓不影响任何设备功能。
 - **Phase 2 状态**：维持 11-11 评估结论——**不建议推进**（触发条件两条硬指标不满足：冷启动用户全程 ~11s 边缘贴线且 Phase 2 仅省 1-3s、OOM 零痕迹；磁盘实测 98MB 修正瘦身空间假设；fork 双轨成本实证）。决策三分支（体验→维持现状 / 平台→先做 1 天裁剪预演 / 冷启动→先 luajit profile）待用户选定方向，无时间压力。
+
+## 2026-11-12 · K5 segfault 崩溃核实（2 次，resume 路径，.so 时间相关待归因）
+
+- **现象**：用户报 K5 崩溃退出。定位两次 **Segmentation fault**（11-09 14:1x 与 11-12 07:53），模式完全同构：**suspend → 唤醒（report started reason=resume）→ 短暂活动 → Kindle 原生 `ue_wait_for_event` poll 中断 + `lipc-wait-event` 退出 → Segmentation fault → KUAL 自动重启**（07:56:30 恢复，进度无损——崩溃前 count=20 上报已完成）。
+- **排除**：weread 插件 Lua 层（segfault 是 C 层崩溃，Lua 错误会有 stack trace；崩溃前插件日志全部正常）。
+- **强相关线索**：crash.log 全历史（追溯至 2019 年系统原始输出）**仅这 2 次 segfault，均在 k4tls .so 部署（11-08）后 4 天内**，且都在 resume 后（K5 生产走 k4tls——resume 时网络活动运行于 .so）。对照 K4：同 .so（11-11 拷入）、resume 32 次同量、**0 次 segfault**——但 K4 样本仅 ~1 天，不足以证伪。
+- **归因局限**：dmesg 不可得（无法直接看 segfault 进程名）；KOReader 自身/驱动层 resume 竞态也是候选；样本 2 次不足以定因。
+- **建议（待用户选）**：A/B 实验——K5 `koreader.sh` 的 `WEREAD_TLS_BACKEND` 临时改回 `luasec` 观察数天：segfault 停发则 .so 嫌疑确认（转 K4WereadRust 修 resume 竞态），仍发则排除。或先继续观察频率（2 次/4 天，自动恢复、进度无损）。
+- **边界**：KOReader 已自动恢复运行（阅读中）；本核实只读。
