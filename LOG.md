@@ -156,3 +156,10 @@
 - **K4 项目的角色**：真机验证过的参考实现，patch 按上游形态重写（不从 K4 分支直接 PR——client.lua 深度分叉）。
 - **如何验证**：patch luac -p 通过；diff 仅 8 行（1 文件）；PR 链接 https://github.com/finlater/weread.koplugin/pull/230 待上游审阅。
 - **边界**：PR 以 dororo42 身份公开；上游合并与否不在本仓控制面内；L2（共享分类器+重试）仍留 watchlist（评估材料在 reports/）。
+
+## 2026-11-11 · 双机核实 + K4 部署验证 + bench 对照 + .so 分发缺口
+
+- **双机状态**：K4/K5 均在线且 `_meta` = 0.6.0-k4-v9.12。**K4 的 v9.12 由并发 agent（CodeBuddy）11-10 部署**（无部署前备份——纪律缺口），md5 三文件与 Release zip 逐字验证完整；K4 登录态有效（ProgressSync verified local=78 remote=77.69）。**K5 会话又过期**（-2012）待用户重扫。两台设备时钟比真实时间快约 30 小时（日志时间戳解读需校正）。
+- **K4 bench 对照（R4 报告建议）**：k4tls MEAN 0.833s vs LuaSec 0.921s（**快 9.6%**，n=10 全成功）——R4 结论跨设备强化（K5 +3.4% / K4 +9.6%）。数据已入 R4 报告。
+- **结构性发现：libk4tls.so 无分发渠道**——.so（1.19MB）不在 git、不在 Release zip，仅 11-08 手工部署 K5；**Release 渠道安装的设备全部实际运行 LuaSec**（回退语义正常无功能影响）。已从 K5 拷 .so 至 K4（md5 一致）。**待决策**：.so 入库 / CI 交叉编译 / 部署文档化（三选一）。
+- **AGENTS.md**：两仓 Current Handoff 指针与 Status 更新提交（bcedf0b / a787cc0）。
