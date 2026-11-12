@@ -206,3 +206,10 @@
 - **选项 A 执行（用户确认）**：K5 `koreader.sh` 的 `WEREAD_TLS_BACKEND` **k4tls → luasec**（备份 `koreader.sh.bak-tls-ab`；显式 luasec 比删除行更明确）。环境变量进程启动时读取——**下次 KOReader 重启生效**（当前会话仍跑 k4tls，不打断用户阅读）。
 - **实验判据**：生效后累积 resume 样本（K5 历史 resume 32 次/数天）——**segfault 停发** → .so 嫌疑确认（转 K4WereadRust 排查 resume 竞态，K4 保留 .so 作对照组）；**仍发生** → 排除 .so，转向 KOReader/驱动层（K4 世代 resume 已知问题类别）。观察窗口建议 ≥3 天或 ≥10 次 resume。
 - **边界**：A 阶段 K5 网络性能回落 LuaSec 基线（0.866s vs 0.837s，无感级）；k4tls 翻闸状态不变（仓库默认仍 LuaSec）。
+
+## 2026-11-12 · 菜单会话状态化 + 长按清除账户落地（用户确认执行）
+
+- **为什么**：用户反馈 Cookie 过期后菜单仍显示「已经登录 · 用户名」（text_func 纯配置态判定，11-09 复审已指出未实施）；`confirmClearAccount` 存在但无任何 UI 入口。
+- **改了什么（插件仓 b6bc596 + 824ef51）**：①登录项 `text_func` 读会话态双信号（运行时 expired latch + LoginHint.is_active 持久快照，nil-safe）——过期显示「Session expired · 用户名」（zh：会话已过期 · 用户名）；②登录项新增 `hold_callback → confirmClearAccount`（ConfirmBox 二次确认；TouchMenu HoldSelect 键事件已核实，K4 非触摸可触发）；③i18n 两条 zh 词条；④新增 `spec/menu_login_text_spec.lua` 5 例（红基线 3 失败→全绿）并登记 module-map（35 spec/0 orphan）。
+- **如何验证**：本机 busted 全量 **468/0**；luacheck 0/0；luac -p / version-sync / module-map 全绿；CI run `43125166970` success。真机验收入 D 系列新增项（显示三态 + 长按触发）。
+- **边界**：显示判定在设备重启后由持久 hint 快照兜底；hold 手势的具体按键映射待真机确认（HoldSelect 机制已核实存在）。
