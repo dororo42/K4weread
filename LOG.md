@@ -199,3 +199,10 @@
 - **归因局限**：dmesg 不可得（无法直接看 segfault 进程名）；KOReader 自身/驱动层 resume 竞态也是候选；样本 2 次不足以定因。
 - **建议（待用户选）**：A/B 实验——K5 `koreader.sh` 的 `WEREAD_TLS_BACKEND` 临时改回 `luasec` 观察数天：segfault 停发则 .so 嫌疑确认（转 K4WereadRust 修 resume 竞态），仍发则排除。或先继续观察频率（2 次/4 天，自动恢复、进度无损）。
 - **边界**：KOReader 已自动恢复运行（阅读中）；本核实只读。
+
+## 2026-11-12 · segfault 更正 + 选项 A（TLS 后端 A/B）执行
+
+- **更正（用户指出）**：11-12 07:53 的 segfault 后 **K5 不是自动恢复，是用户手动重启**——「launching...」为用户手动启动 KOReader。严重性上调：segfault 导致 KOReader 死亡且**设备停留黑屏/卡死状态需人工干预**（非静默自愈）。修正前节「KUAL 自动重新拉起」表述。
+- **选项 A 执行（用户确认）**：K5 `koreader.sh` 的 `WEREAD_TLS_BACKEND` **k4tls → luasec**（备份 `koreader.sh.bak-tls-ab`；显式 luasec 比删除行更明确）。环境变量进程启动时读取——**下次 KOReader 重启生效**（当前会话仍跑 k4tls，不打断用户阅读）。
+- **实验判据**：生效后累积 resume 样本（K5 历史 resume 32 次/数天）——**segfault 停发** → .so 嫌疑确认（转 K4WereadRust 排查 resume 竞态，K4 保留 .so 作对照组）；**仍发生** → 排除 .so，转向 KOReader/驱动层（K4 世代 resume 已知问题类别）。观察窗口建议 ≥3 天或 ≥10 次 resume。
+- **边界**：A 阶段 K5 网络性能回落 LuaSec 基线（0.866s vs 0.837s，无感级）；k4tls 翻闸状态不变（仓库默认仍 LuaSec）。
