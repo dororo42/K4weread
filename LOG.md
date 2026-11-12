@@ -213,3 +213,11 @@
 - **改了什么（插件仓 b6bc596 + 824ef51）**：①登录项 `text_func` 读会话态双信号（运行时 expired latch + LoginHint.is_active 持久快照，nil-safe）——过期显示「Session expired · 用户名」（zh：会话已过期 · 用户名）；②登录项新增 `hold_callback → confirmClearAccount`（ConfirmBox 二次确认；TouchMenu HoldSelect 键事件已核实，K4 非触摸可触发）；③i18n 两条 zh 词条；④新增 `spec/menu_login_text_spec.lua` 5 例（红基线 3 失败→全绿）并登记 module-map（35 spec/0 orphan）。
 - **如何验证**：本机 busted 全量 **468/0**；luacheck 0/0；luac -p / version-sync / module-map 全绿；CI run `43125166970` success。真机验收入 D 系列新增项（显示三态 + 长按触发）。
 - **边界**：显示判定在设备重启后由持久 hint 快照兜底；hold 手势的具体按键映射待真机确认（HoldSelect 机制已核实存在）。
+
+## 2026-11-12 · 菜单 TLS 后端勾选落地（用户确认执行，TDD）
+
+- **为什么**：用户需求——`koreader.sh` 的 `export WEREAD_TLS_BACKEND` 对用户不可见不可操作，要求微信读书菜单内可勾选开启/关闭 k4tls。
+- **改了什么（插件仓 eb78802 + dd9ae86 + 6cd189b）**：①`transport.lua` 增 `backend_explicit`——**菜单显式选择优先于部署 env**（否则勾选永远赢不了 export）；env 仅在用户未显式选择时生效，**进行中的 K5 A/B 观察不受影响**（不点菜单就不覆盖 env 的 luasec）。②`main.lua` init 恢复持久化 `settings.tls_backend`（显式选择跨重启保留）。③Settings 新增「Rust TLS 传输（k4tls）」勾选项：checked_func 反映实时生效态；勾选时 .so 不可加载显式 transient 提示回退（不静默）。④i18n 两条 zh 词条。⑤spec：transport 优先级 4 例 + 菜单勾选 2 例。
+- **评估修正（撤回）**：11-12 评估中「socket.http 明文回退缺陷」判断**撤回**——INTEGRATION.md:129 设计文档确认 KOReader 的 socket.http 对 https 基址委托 ssl.https（既定设计，逐字不动）。
+- **如何验证**：本机 busted 全量 **478/0**（+10）；luacheck 85 文件 0/0（CI 两次拦截 unused 变量后清零）；luac -p / version-sync / module-map 全绿；CI run `43133168906` success。
+- **边界**：A/B 期间勿在 K5 勾选（勾选覆盖 env 的 luasec 会破坏 segfault 归因）；真机 D 项验收待加（显示三态+长按+TLS 勾选）。
