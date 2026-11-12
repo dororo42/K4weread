@@ -229,3 +229,10 @@
 - **本仓改了什么**：①`docs/INSTALL.md` 资产名 `v0.1.1` → `v0.1.2`、插件最低版本 `v9.8` → `v9.9+`（F-1/F-2）；②`README.md` 区分「最低要求/当前版本」、修正 ci.yml 与 release.yml 的职责描述、登记新门禁（F-2/F-4/F-7）；③`docs/DESIGN.md` 标注「v9.7 为设计基线、非当前版本」（F-2）；④`docs/REAL_DEVICE_TEST.md` 头部区间扩到 v9.12、按交接文档与 LOG 记账勾选 D10 / D11②、补登 D12–D14 待验项，并显式声明「勾选依据仓内记账，本次未连设备复验」（F-3）；⑤新增 `tools/check_docs_consistency.py`（资产名/插件最低版本/交接指针三检查）并接入 `ci.yml`（F-7）；⑥`ci.yml` 克隆 peer 后打印其 commit SHA——保留跟踪 `main` 以及时报警漂移，同时让同一 K4weread 提交的校验结果可复现（F-6）。
 - **如何验证**：`sh -n` 两个脚本通过；`check_menu.py` / `check_config.py` / `check_marker_path.py --peer-repo` / `check_docs_consistency.py` 四道 Python 门禁实跑全绿；新门禁另做负向验证（临时副本改资产名与最低版本均按预期 FAIL）。未运行构建/打包、未运行插件仓 busted 或 Rust 仓 cargo、未连真机、未访问远端 Release。
 - **边界**：三仓状态指针与各自 handoff 套件同批生成（本地 only，不入库）；本仓与 K4WereadRust 无代码契约，不引用 `libk4tls` 资产；跨仓改动范围、依赖关系与同步顺序见三仓 HANDOFF.md 的「三仓协同」节。
+
+## 2026-11-12 · 书架治理落地（perf(shelf)）+ 并发 agent 晚间批次审计 + 推送断窗
+
+- **书架治理（9874cc4，本地待推）**：①后台回调重排（重绘先行：_applyShelfBooks→refresh→cacheShelf→mark_synced——用户立即见新书，慢 SQLite 挪后）②FRESH_SECONDS 300→1800（冻结频率降 6 倍）。新增行为级 spec（showBookshelf 缓存路径顺序断言：红基线 network,cacheShelf,refresh → 绿）。本机 busted 全量 488/0。
+- **并发 agent 晚间批次审计（14:26/20:04/20:51/22:15 四提交，均未推送）**：三仓审查复核（版本门禁/README/ChangeLog 对齐）、Reading style 菜单项移除（Press 键直达，菜单项冗余）、子菜单按键可达+状态弹窗会话行、**QR 弹窗 Back/Menu 失效回归修复**（v9.10 提示条 show 成栈顶吞键——v9.12 部署后 K4 QR 退出失效的根因，TDD）。均 TDD 带测试。
+- **我的评估修正**：撤回「socket.http 明文回退缺陷」判断（INTEGRATION.md:129 确认 https 委托为设计）；书架治理与并发 agent 无撞车（reflog 确认 9874cc4 为我的提交，前三者为并发 agent 的独立批次）。
+- **网络**：GitHub 双路（直连/代理）持续断窗，4 提交待推——后台重试循环运行中。
