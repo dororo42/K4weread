@@ -23,8 +23,15 @@ jobs:
       - name: XML gates (config.xml)
         run: python3 tools/check_config.py
 
+      - name: Documentation consistency (asset / plugin floor / handoff pointer)
+        run: python3 tools/check_docs_consistency.py
+
+      # Intentionally tracks peer main so a marker-path drift fails this gate.
+      # The peer commit is logged so the same K4weread commit is reproducible.
       - name: Clone peer plugin repo (cross-repo marker contract)
-        run: git clone --depth 1 https://github.com/dororo42/weread_K4.koplugin.git ../weread_K4.koplugin
+        run: |
+          git clone --depth 1 https://github.com/dororo42/weread_K4.koplugin.git ../weread_K4.koplugin
+          echo "::notice::peer plugin HEAD = $(git -C ../weread_K4.koplugin rev-parse HEAD)"
 
       - name: Marker-path consistency (writer / reader / docs)
         run: python3 tools/check_marker_path.py --peer-repo ../weread_K4.koplugin

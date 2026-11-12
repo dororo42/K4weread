@@ -4,7 +4,7 @@
 
 - Kindle 4（`0E`/Tequila）或黑色 Kindle 5th Gen / K4B（`23`/Sauza），FW 4.1.4，已越狱 + MKK + KUAL-KDK-1.0（azw2）。
 - 已部署 KOReader（实机 v2026.07.1 验证）。
-- 已部署 [weread_K4.koplugin](https://github.com/dororo42/weread_K4.koplugin) **v9.8 或更高**（v9.0–v9.7 仍是可用入口，但缺少样式直达、原地重绘修复等后续能力；< v9.0 无 weread-only 模式）。
+- 已部署 [weread_K4.koplugin](https://github.com/dororo42/weread_K4.koplugin) **v9.9+**（与 `README.md` 统一的最低要求；v9.0–v9.8 仍是可用入口，但缺少样式直达、原地重绘修复等后续能力；< v9.0 无 weread-only 模式）。最低要求不等于当前版本：插件仓已发版 v9.12，当前推荐组合见「三仓兼容矩阵」交接记录。
 
 ## 安装（USB 或 scp 二选一）
 
@@ -41,7 +41,7 @@ ssh -p 2222 root@192.168.2.x "chmod 0755 /mnt/us/extensions/k4weread/bin/k4werea
 
 ## 发布资产说明
 
-Release 的 `K4weread-v0.1.1.zip` 是**发版时的运行时快照**，包内 README/文档语义可能落后于仓库 HEAD；依赖版本与按键说明以仓库 HEAD 的 `README.md` / `docs/DESIGN.md` 为准。运行时三件套以 zip 内文件为准，完整性用同目录下的 `.zip.sha256` 校验。按项目发版纪律，只有明确发版时才递增 `kual/config.xml` 的版本号并由 `release.yml` 重出资产。
+Release 的 `K4weread-v0.1.2.zip` 是**发版时的运行时快照**，包内 README/文档语义可能落后于仓库 HEAD；依赖版本与按键说明以仓库 HEAD 的 `README.md` / `docs/DESIGN.md` 为准。运行时三件套以 zip 内文件为准，完整性用同目录下的 `.zip.sha256` 校验。按项目发版纪律，只有明确发版时才递增 `kual/config.xml` 的版本号并由 `release.yml` 重出资产；资产名由 `config.xml` 的 `<version>` 决定，本文件（及 `README.md`）中出现的资产名由 `tools/check_docs_consistency.py` 门禁校验，避免再次滞后。
 
 ## 排障
 

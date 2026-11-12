@@ -221,3 +221,11 @@
 - **评估修正（撤回）**：11-12 评估中「socket.http 明文回退缺陷」判断**撤回**——INTEGRATION.md:129 设计文档确认 KOReader 的 socket.http 对 https 基址委托 ssl.https（既定设计，逐字不动）。
 - **如何验证**：本机 busted 全量 **478/0**（+10）；luacheck 85 文件 0/0（CI 两次拦截 unused 变量后清零）；luac -p / version-sync / module-map 全绿；CI run `43133168906` success。
 - **边界**：A/B 期间勿在 K5 勾选（勾选覆盖 env 的 luasec 会破坏 segfault 归因）；真机 D 项验收待加（显示三态+长按+TLS 勾选）。
+
+## 2026-11-12 · 三仓代码审查复核意见落地（源码/文档/门禁，未发版）
+
+- **依据**：`~/reports/2026-11-12-K4weread-三仓代码审查与项目一致性核查报告.md`（I-1…I-8 共 8 类不一致 + F-1…F-13 共 13 项优化建议）。本批只改源码/文档/护栏，**不改运行时行为、不递增版本号、不打 tag、不 push、不构建**。
+- **状态覆盖（F-5）**：本文件 11-12 `:191`「当前未发版内容：仅本批文档与 workflow 变更…无运行时代码变更」是当时的时序性结论，已被同日 `:210`、`:217` 两批插件仓运行时改动推翻；以本条为准，旧条按追加式日志保留不回改。
+- **本仓改了什么**：①`docs/INSTALL.md` 资产名 `v0.1.1` → `v0.1.2`、插件最低版本 `v9.8` → `v9.9+`（F-1/F-2）；②`README.md` 区分「最低要求/当前版本」、修正 ci.yml 与 release.yml 的职责描述、登记新门禁（F-2/F-4/F-7）；③`docs/DESIGN.md` 标注「v9.7 为设计基线、非当前版本」（F-2）；④`docs/REAL_DEVICE_TEST.md` 头部区间扩到 v9.12、按交接文档与 LOG 记账勾选 D10 / D11②、补登 D12–D14 待验项，并显式声明「勾选依据仓内记账，本次未连设备复验」（F-3）；⑤新增 `tools/check_docs_consistency.py`（资产名/插件最低版本/交接指针三检查）并接入 `ci.yml`（F-7）；⑥`ci.yml` 克隆 peer 后打印其 commit SHA——保留跟踪 `main` 以及时报警漂移，同时让同一 K4weread 提交的校验结果可复现（F-6）。
+- **如何验证**：`sh -n` 两个脚本通过；`check_menu.py` / `check_config.py` / `check_marker_path.py --peer-repo` / `check_docs_consistency.py` 四道 Python 门禁实跑全绿；新门禁另做负向验证（临时副本改资产名与最低版本均按预期 FAIL）。未运行构建/打包、未运行插件仓 busted 或 Rust 仓 cargo、未连真机、未访问远端 Release。
+- **边界**：三仓状态指针与各自 handoff 套件同批生成（本地 only，不入库）；本仓与 K4WereadRust 无代码契约，不引用 `libk4tls` 资产；跨仓改动范围、依赖关系与同步顺序见三仓 HANDOFF.md 的「三仓协同」节。

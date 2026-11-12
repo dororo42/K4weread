@@ -38,7 +38,7 @@ USB 拷贝或 scp 到 `/mnt/us/extensions/k4weread/`：
 
 > Release 的 `K4weread-v0.1.2.zip` 是发版时快照，包内文档语义可能落后于仓库 HEAD；运行时三件套以 zip 内文件为准，依赖/按键说明以本仓库 HEAD 为准。
 
-## K4weread 会话中的按键（v0.1.2 / 插件 v9.9）
+## K4weread 会话中的按键（v0.1.2 / 插件最低 v9.9+）
 
 保留 weread_K4.koplugin 现有 15 条快捷键（见[插件 README 的按键速查表](https://github.com/dororo42/weread_K4.koplugin#K4-阅读时按键速查koreader--hotkeyskoplugin--本分支改动)），其中 2 条在 weread-only 模式下重定义：
 
@@ -66,9 +66,10 @@ sh tools/build_release.sh          # K4weread-v<ver>.zip + .sha256
 python3 tools/check_menu.py        # menu.json 选项词汇门禁
 python3 tools/check_config.py      # config.xml 解析 + version 单一来源
 python3 tools/check_marker_path.py --peer-repo ../weread_K4.koplugin
+python3 tools/check_docs_consistency.py  # 文档中的版本/资产名/交接指针一致性
 ```
 
-CI：`.github/workflows/ci.yml`（shell 语法 / JSON / XML / 跨仓标记路径 / 打包 + sha256 + zip 白名单）；发版：`.github/workflows/release.yml`（`v*` tag push → 由 workflow 构建 zip + sha256 并创建 GitHub Release）。按项目纪律，Release 资产由 workflow 产出，不在本机手工构建。
+CI：`.github/workflows/ci.yml`（`sh -n` / menu.json / config.xml / 跨仓标记路径 / 文档一致性共五道门禁；克隆插件仓 `main` 时会打印被校验的 peer commit SHA 以便复现）。发版：`.github/workflows/release.yml`（`v*` tag push → 构建 zip + sha256、校验校验和、断言 zip 白名单、创建 GitHub Release）。打包与 zip 白名单**不在** ci.yml 中。按项目纪律，Release 资产由 workflow 产出，不在本机手工构建。
 
 ## License
 
