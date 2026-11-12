@@ -248,3 +248,10 @@
 - **部署**：备份 `weread_K4.koplugin-backup-20261113-pre-unreleased.tgz` → 部署本地 HEAD（v9.12 后 10 个运行时文件：QR 回归修复/书架治理重排+1800s/菜单三增强/子菜单可达/Reading style 移除）。md5 七文件抽验逐字一致。tar 方式在设备 BusyBox 下解包异常（GNU 头部跳过），改 scp 单文件方式（先例）。
 - **待 KOReader 重启生效**；真机验证点：QR 弹窗 Back/Menu（476f59c 回归修复）、书架刷新（冻结治理）、菜单三增强。
 - **边界**：未发版部署（先例纪律）；K4（B00E）同批未发版内容待其上线部署。
+
+## 2026-11-13 · K4 上线核实 + 部署未发版 HEAD（双机收口）
+
+- **K4 核实**：v9.12 + libk4tls.so 在位（11-11 拷入未失）；登录态活跃（11-12 22:17 重扫 count=1 → 22:36 count=40 → 11-13 07:13 会话隔夜过期后重扫 count=1——正常节律）。
+- **部署**：备份 `weread_K4.koplugin-backup-20261113-pre-unreleased.tgz` → 11 个运行时文件（v9.12..HEAD：QR 回归修复/书架治理重排+1800s/菜单三增强/子菜单可达/Reading style 移除）→ md5 八文件抽验逐字一致。**K4 部署暂缓状态解除，双机均运行本地 HEAD**（_meta 保持 v9.12 字面量，随下一批发版递增）。
+- **待 KOReader 重启生效**；真机验证点：QR 弹窗 Back/Menu（K4 是失效现场设备，476f59c 修复待复验）、书架刷新（10162 本冻结治理）、菜单三增强、TLS 勾选（K4 .so 在位可勾选）。
+- **A/B 提醒**：K4 未改 env（无 export）——K4 默认 LuaSec 路径；K5 在 A/B（luasec）——双机均在 LuaSec，对照基线一致。
